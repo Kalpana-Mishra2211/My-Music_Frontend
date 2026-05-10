@@ -140,7 +140,6 @@ const musicSlice = createSlice({
         builder
             .addCase(getMusicList.pending, (state) => {
                 state.loading = true;
-                console.log("object")
                 state.error = null;
                 state.musicsList = [];
             })

@@ -21,11 +21,9 @@ const FollowingArtists = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth || {});
-  const { following = [], loading} = useSelector((store) => store.artist);
+  const { following = [], loading } = useSelector((store) => store.artist);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [hoveredArtist, setHoveredArtist] = useState(null);
-  const [sortBy, setSortBy] = useState("recent");
 
   useEffect(() => {
     dispatch(getFollowing());
@@ -48,50 +46,49 @@ const FollowingArtists = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-pink-100 to-pruple-200 relative overflow-hidden">
 
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+            <div className="flex items-center gap-3 sm:gap-4">
               <MusicalBackButton to="/home" />
+
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
-                    <FaHeadphones className="text-white text-sm" />
-                  </div>
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
+                  <FaHeadphones className="text-white text-xs sm:text-sm" />
                 </div>
 
-                <div className="leading-tight">
-
-                  <h1 className="text-2xl font-semibold text-gray-800 tracking-tight flex items-center gap-2">
-                    Following Artists
-                    <span className="text-lg text-gray-500 font-medium">
-                      ({filteredArtists.length})
-                    </span>
-                  </h1>
-                </div>
+                <h1 className="text-lg sm:text-2xl font-semibold text-gray-800 tracking-tight flex items-center gap-2 flex-wrap">
+                  Following Artists
+                  <span className="text-sm sm:text-lg text-gray-500 font-medium">
+                    ({filteredArtists.length})
+                  </span>
+                </h1>
               </div>
             </div>
 
-            <div className="relative group">
+            <div className="relative w-full sm:w-auto">
               <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                 <FaSearch
                   size={14}
                   className="text-gray-300 group-focus-within:text-purple-500 transition-all duration-300"
                 />
               </div>
+
               <input
                 type="text"
                 placeholder="Search artists..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2.5 w-72 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/15 focus:border-purple-300 focus:bg-white transition-all duration-300 hover:border-gray-300 hover:bg-white/80"
+                className="pl-10 pr-4 py-2.5 w-full sm:w-72 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/15 focus:border-purple-300 focus:bg-white transition-all duration-300 hover:border-gray-300 hover:bg-white/80"
               />
             </div>
+
           </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-8 relative z-10">
-        {loadind ? (
+        {loading ? (
           <div className="flex justify-center items-center h-96">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>

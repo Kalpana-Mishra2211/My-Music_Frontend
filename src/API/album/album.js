@@ -33,8 +33,6 @@ export const createAlbum = createAsyncThunk(
 export const updateAlbum = createAsyncThunk(
     "album/updateAlbum",
     async ({ id, formData }, { rejectWithValue }) => {
-        console.log("formData", formData);
-
         try {
             const res = await api.put(`music/album/${id}`, formData);
             return res.data

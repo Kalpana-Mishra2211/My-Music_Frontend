@@ -35,7 +35,7 @@ const MyNetwork = () => {
     loading,
   } = useSelector((state) => state.artist);
 
- 
+
 
   useEffect(() => {
     if (activeTab === "followers") {
@@ -69,34 +69,32 @@ const MyNetwork = () => {
         <div className="absolute bottom-0 -right-40 w-96 h-96 bg-gradient-to-br from-indigo-100/30 to-purple-100/40 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-stone-100/20 to-gray-100/20 rounded-full blur-3xl" />
       </div>
-
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-                        <MusicalBackButton to="/home" />
-
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <MusicalBackButton to="/home" />
 
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-pink-400 to-purple-400 blur-md opacity-30 animate-pulse" />
-                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
-                    <FaGem className="text-white text-sm" />
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center shadow-lg">
+                    <FaGem className="text-white text-xs sm:text-sm" />
                   </div>
                 </div>
 
                 <div className="leading-tight">
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold letter-spacing-0.5">
+                  <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-gray-400 font-semibold">
                     Creative Network
                   </p>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent tracking-tight">
+                  <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 bg-clip-text text-transparent">
                     My Network
                   </h1>
                 </div>
               </div>
             </div>
 
-            <div className="relative group">
+            <div className="relative w-full sm:w-auto">
               <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
                 <FaSearch
                   size={14}
@@ -109,43 +107,36 @@ const MyNetwork = () => {
                 placeholder="Search artists..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2.5 w-72 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/15 focus:border-purple-300 focus:bg-white transition-all duration-300 hover:border-gray-300 hover:bg-white/80"
+                className="pl-10 pr-4 py-2.5 w-full sm:w-72 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/15 focus:border-purple-300 focus:bg-white transition-all duration-300 hover:border-gray-300 hover:bg-white/80"
               />
-
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-6 pt-2">
-            <div className="flex gap-1">
+          <div className="flex items-center justify-start sm:justify-between mt-5 pt-2 overflow-x-auto no-scrollbar">
+            <div className="flex gap-1 min-w-max">
               {[
                 { id: "followers", icon: FaUsers, label: "Followers" },
                 { id: "following", icon: FaUserPlus, label: "Following" },
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 const count =
-                  tab.id === "followers"
-                    ? followers.length
-                    : following.length;
+                  tab.id === "followers" ? followers.length : following.length;
 
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`
-            group relative px-5 py-2.5 rounded-full 
-            transition-all duration-300 
-            ${isActive
+                    className={`group relative px-4 sm:px-5 py-2.5 rounded-full transition-all duration-300 whitespace-nowrap ${isActive
                         ? "bg-gradient-to-r from-pink-500/10 to-purple-500/10 text-gray-800"
                         : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                      }
-          `}
+                      }`}
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2">
                       <tab.icon
-                        size={15}
+                        size={14}
                         className={`transition-colors ${isActive
-                          ? "text-pink-500"
-                          : "text-gray-400 group-hover:text-gray-500"
+                            ? "text-pink-500"
+                            : "text-gray-400 group-hover:text-gray-500"
                           }`}
                       />
 
@@ -154,14 +145,7 @@ const MyNetwork = () => {
                       </span>
 
                       {isActive && (
-                        <span
-                          className="
-                  relative px-2 py-0.5 rounded-full text-[11px] font-semibold 
-                  transition-all duration-300
-                  bg-gradient-to-r from-pink-500 to-purple-500 
-                  text-white shadow-sm
-                "
-                        >
+                        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm">
                           {count}
                         </span>
                       )}

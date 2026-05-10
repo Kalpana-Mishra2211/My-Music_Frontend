@@ -138,7 +138,6 @@ const RegisterPage = () => {
       !/^@?[\w]+$/.test(artistProfile.socialLinks.twitter.replace('@', ''))) {
       newErrors.twitter = "Please enter a valid Twitter username";
     }
-    console.log("Validation Errors:", newErrors);
 
     setArtistErrors(newErrors);
     return Object.keys(newErrors).length === 0;
