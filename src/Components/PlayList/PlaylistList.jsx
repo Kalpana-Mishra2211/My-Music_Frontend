@@ -59,7 +59,7 @@ function PlaylistList() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-  <MusicalBackButton to="/home"/>
+          <MusicalBackButton to="/home" />
 
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -137,7 +137,7 @@ function PlaylistList() {
                         e.stopPropagation();
                         navigate(`/update-playlist/${playlist._id}`)
                       }}
-                      className="text-blue-500 hover:text-blue-700 transition-colors ml-2 opacity-0 group-hover:opacity-100"
+                      className="text-blue-500 hover:text-blue-700 transition-colors ml-2"
                     >
                       <EditIcon className="w-4 h-4" />
                     </button>
@@ -146,7 +146,7 @@ function PlaylistList() {
                         e.stopPropagation();
                         handleDeletePlaylist(playlist._id);
                       }}
-                      className="text-red-500 hover:text-red-700 transition-colors ml-2 opacity-0 group-hover:opacity-100"
+                      className="text-red-500 hover:text-red-700 transition-colors ml-2"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

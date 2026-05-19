@@ -56,6 +56,7 @@ const RegisterPage = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registrationData, setRegistrationData] = useState(null);
 
+
   const genresList = [
     "Pop", "Rock", "Hip Hop", "R&B", "Electronic", "Jazz", "Classical",
     "Country", "Folk", "Metal", "Punk", "Indie", "Alternative", "Blues",
@@ -99,6 +100,11 @@ const RegisterPage = () => {
 
   const validateArtistProfile = () => {
     const newErrors = {};
+
+ if (!profileImage) {
+      newErrors.profileImage = "Profile Image is required";
+    }
+
     if (!artistProfile.stageName.trim()) {
       newErrors.stageName = "Stage name is required";
     } else if (artistProfile.stageName.length < 2) {
@@ -181,23 +187,30 @@ const RegisterPage = () => {
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
+    setArtistErrors(prev => ({
+      ...prev,
+      profileImage: ""
+    }));
+    setProfileImage(null);
+    setProfileImagePreview("");
+
+    const allowedType = ["image/jpeg", "image/png"]
+
+    if (!allowedType.includes(file.type)) {
+      setArtistErrors(prev => ({
+        ...prev,
+        profileImage: "Only JPG and PNG files are allowed"
+      }))
+      return;
+    }
     if (file) {
       setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setProfileImagePreview(URL.createObjectURL(file));
+
     }
   };
 
-  const handleBlur = (field) => {
-    setTouched({ ...touched, [field]: true });
-  };
 
-  const handleArtistBlur = (field) => {
-    setArtistTouched({ ...artistTouched, [field]: true });
-  };
 
   const handleRoleChange = (role) => {
     handleInputChange("role", role);
@@ -207,7 +220,6 @@ const RegisterPage = () => {
   };
 
   const handleArtistSubmit = () => {
-
 
     if (validateArtistProfile()) {
       setShowArtistModal(false);
@@ -389,7 +401,6 @@ const RegisterPage = () => {
                     placeholder="Choose a username"
                     value={form.userName}
                     onChange={(e) => handleInputChange("userName", e.target.value)}
-                    onBlur={() => handleBlur("userName")}
                     onKeyPress={handleKeyPress}
                     className={`w-full pl-10 pr-10 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${errors.userName
                       ? "border-red-400 focus:ring-red-200 focus:border-red-400"
@@ -418,7 +429,6 @@ const RegisterPage = () => {
                     placeholder="Enter your email"
                     value={form.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    onBlur={() => handleBlur("email")}
                     onKeyPress={handleKeyPress}
                     className={`w-full pl-10 pr-10 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${errors.email
                       ? "border-red-400 focus:ring-red-200 focus:border-red-400"
@@ -589,6 +599,11 @@ const RegisterPage = () => {
                     />
                   </label>
                 </div>
+                {artistErrors?.profileImage && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {artistErrors.profileImage}
+                  </p>
+                )}
                 <p className="text-xs text-gray-500 mt-2">Optional. Recommended size: 500x500px</p>
               </div>
 
@@ -621,7 +636,6 @@ const RegisterPage = () => {
                   placeholder="Tell us about yourself, your music journey, style, influences, etc."
                   value={artistProfile.bio}
                   onChange={(e) => handleArtistProfileChange("bio", e.target.value)}
-                  onBlur={() => handleArtistBlur("bio")}
                   rows="4"
                   className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${artistErrors?.stageName
                     ? "border-red-400 focus:ring-red-200"
@@ -676,7 +690,6 @@ const RegisterPage = () => {
                     placeholder="Contact number (for business inquiries)"
                     value={artistProfile.phoneNumber}
                     onChange={(e) => handleArtistProfileChange("phoneNumber", e.target.value)}
-                    onBlur={() => handleArtistBlur("phoneNumber")}
                     className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
                   />
                 </div>
@@ -730,7 +743,6 @@ const RegisterPage = () => {
                       placeholder="Twitter/X username (e.g., @artistname)"
                       value={artistProfile.socialLinks.twitter}
                       onChange={(e) => handleArtistProfileChange("socialLinks.twitter", e.target.value)}
-                      onBlur={() => handleArtistBlur("twitter")}
                       className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
                     />
                   </div>

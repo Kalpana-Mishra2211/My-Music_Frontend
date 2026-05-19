@@ -6,7 +6,6 @@ export const getMusicList = createAsyncThunk(
     async (artistId, { rejectWithValue }) => {
         try {
             const url = artistId ? `music?artistId=${artistId}` : "/music";
-
             const res = await api.get(url);
 
             return res.data;

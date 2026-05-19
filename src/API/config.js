@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 10000,
+  // timeout: 10000,
 });
 
 api.interceptors.request.use(
@@ -11,7 +11,9 @@ api.interceptors.request.use(
 
     const isAuthRoute =
       config.url?.includes("/login") ||
-      config.url?.includes("/register");
+      config.url?.includes("/register")||
+      config.url?.includes("/forgot-password")||
+      config.url?.includes("/reset-password/:token");
 
     if (token && !isAuthRoute) {
       config.headers.Authorization = `Bearer ${token}`;

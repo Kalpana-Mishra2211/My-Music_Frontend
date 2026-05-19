@@ -165,9 +165,15 @@ const LoginPage = () => {
             )}
           </div>
 
+          <div className="flex justify-end">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-purple-500 hover:text-purple-600 font-medium transition-colors"
+            >
+              Forgot Password?
+            </Link>
+          </div>
 
-
-          {/* Login Button */}
           <button
             onClick={handleLogin}
             disabled={loading}

@@ -17,11 +17,14 @@ import {
   Edit2,
   Play,
   Plus,
-  ThumbsUp
+  ThumbsUp,
+  ChevronDown,
+  Menu
 } from "lucide-react";
 import Swal from 'sweetalert2';
 import ArtistProfileModal from "./ProfileModal";
 import { FaThumbsUp } from "react-icons/fa";
+import ChangePassword from "../Auth/ChangePassword";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -30,7 +33,7 @@ function NavBar() {
   const [user, setUser] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isArtistModalOpen, setIsArtistModalOpen] = useState(false);
-
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -113,24 +116,20 @@ function NavBar() {
               >
                 ❤️ Favorite Songs
               </button>
+
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
               <div className="relative">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-3 focus:outline-none"
+                  className="flex items-center space-x-3 focus:outline-none cursor-pointer"
                 >
                   <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
-                    {user?.profileImage ? (
-                      <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                    ) : user?.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                    ) : (
-                      user?.stageName ? user.stageName[0].toUpperCase() :
-                        user?.userName ? user.userName[0].toUpperCase() :
-                          user?.email?.[0]?.toUpperCase() || "U"
-                    )}
+
+                    {user?.userName ? user.userName[0].toUpperCase() :
+                      user?.email?.[0]?.toUpperCase() || "U"}
+
                   </div>
                   <div className="text-left">
                     <div className="text-sm font-medium text-gray-700">
@@ -140,9 +139,10 @@ function NavBar() {
                       {user?.role === "artist" ? "Artist" : "Listener"}
                     </div>
                   </div>
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-600 transition-transform ${isMenuOpen ? "rotate-180" : ""
+                      }`}
+                  />
                 </button>
 
                 {isMenuOpen && (
@@ -150,18 +150,13 @@ function NavBar() {
                     <div className="px-4 py-3 border-b border-gray-100">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
-                          {user?.profileImage ? (
-                            <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                          ) : user?.avatar ? (
-                            <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                          ) : (
-                            user?.stageName ? user.stageName[0].toUpperCase() :
+                          {
                               user?.userName ? user.userName[0].toUpperCase() : "U"
-                          )}
+                          }
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-gray-800">
-                            {user?.stageName || user?.userName || "User"}
+                            {user?.userName || "User"}
                           </p>
                           <p className="text-xs text-gray-500">{user?.email}</p>
                         </div>
@@ -191,13 +186,13 @@ function NavBar() {
 
                     <button
                       onClick={() => {
-                        navigate("/create-playlist");
+                        setIsPasswordModalOpen(true);
                         setIsMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-50 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-50 flex items-center gap-2"
                     >
-                      <Plus className="w-4 h-4" />
-                      Create Playlist
+                      <Shield className="w-4 h-4" />
+                      Change Password
                     </button>
 
                     {user?.role === "artist" && (
@@ -230,13 +225,11 @@ function NavBar() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-gray-600 hover:text-purple-600 focus:outline-none"
               >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {isMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
+                {isMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </button>
             </div>
           </div>
@@ -263,46 +256,7 @@ function NavBar() {
                   🎵 Music
                 </button>
 
-                <button
-                  onClick={() => {
-                    navigate("/create-playlist");
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 text-green-600 hover:bg-green-50 rounded-lg flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Create Playlist
-                </button>
 
-                <button
-                  onClick={() => {
-                    navigate("/playlist");
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 text-purple-600 hover:bg-purple-50 rounded-lg flex items-center gap-2"
-                >
-                  <Play className="w-4 h-4" />
-                  My Playlists
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/liked-songs");
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-gray-50 flex items-center gap-2"
-                >
-                  <FaThumbsUp className="w-4 h-4" />
-                  Liked songs
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/favorite-musics");
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 text-pink-600 hover:bg-pink-50 rounded-lg"
-                >
-                  ❤️ Favorite Songs
-                </button>
 
                 <div className="px-3 py-2 border-t border-gray-100">
                   <div className="flex items-center space-x-3 mb-3">
@@ -338,6 +292,48 @@ function NavBar() {
                   </button>
                 )}
                 <button
+                  onClick={() => {
+                    setIsPasswordModalOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <Shield className="w-4 h-4" />
+                  Change Password
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/playlist");
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-purple-600 hover:bg-purple-50 rounded-lg flex items-center gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  My Playlists
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/liked-songs");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <FaThumbsUp className="w-4 h-4" />
+                  Liked songs
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/favorite-musics");
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-pink-600 hover:bg-pink-50 rounded-lg"
+                >
+                  ❤️ Favorite Songs
+                </button>
+                <button
                   onClick={handleLogout}
                   className="block w-full text-left px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
                 >
@@ -356,6 +352,13 @@ function NavBar() {
           onClose={() => setIsArtistModalOpen(false)}
           user={user}
         />}
+
+      {isPasswordModalOpen && (
+        <ChangePassword
+          isOpen={isPasswordModalOpen}
+          onClose={() => setIsPasswordModalOpen(false)}
+        />
+      )}
     </>
   );
 }

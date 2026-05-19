@@ -24,27 +24,22 @@ const PendingApprovalPage = () => {
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState("");
 
-  // Get email from location state or user context
   const email = location.state?.email || user?.email || "";
   const role = location.state?.role || user?.role || "artist";
 
-  // Calculate estimated approval time (1-2 business days from now)
   useEffect(() => {
     const calculateEstimatedTime = () => {
       const now = new Date();
       let businessDays = 0;
       let estimatedDate = new Date(now);
-      
-      // Add 1-2 business days
-      while (businessDays < 2) {
+            while (businessDays < 2) {
         estimatedDate.setDate(estimatedDate.getDate() + 1);
         const dayOfWeek = estimatedDate.getDay();
-        // Skip Saturday (6) and Sunday (0)
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
           businessDays++;
         }
       }
-      
+    
       const options = { 
         weekday: 'long', 
         year: 'numeric', 
@@ -60,7 +55,6 @@ const PendingApprovalPage = () => {
     setTimeRemaining(calculateEstimatedTime());
   }, []);
 
-  // Update time remaining every minute
   useEffect(() => {
     const updateTimeRemaining = () => {
       const now = new Date();
@@ -89,7 +83,6 @@ const PendingApprovalPage = () => {
     setResendMessage("");
     
     try {
-      // Simulate API call to resend verification email
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setResendMessage("Verification email has been resent successfully!");
@@ -103,7 +96,6 @@ const PendingApprovalPage = () => {
   };
 
   const handleCheckStatus = () => {
-    // Navigate to status check page or refresh
     window.location.reload();
   };
 
@@ -113,7 +105,6 @@ const PendingApprovalPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-50 to-blue-50">
-      {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
@@ -135,9 +126,7 @@ const PendingApprovalPage = () => {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Status Banner */}
           <div className="bg-yellow-50 border-b border-yellow-100 px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-yellow-100 rounded-full">
@@ -153,7 +142,6 @@ const PendingApprovalPage = () => {
           </div>
 
           <div className="p-6 md:p-8">
-            {/* Icon and Title */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-24 h-24 bg-purple-100 rounded-full mb-4 animate-pulse">
                 <Clock className="w-12 h-12 text-purple-500" />
@@ -170,9 +158,7 @@ const PendingApprovalPage = () => {
               </p>
             </div>
 
-            {/* Status Information */}
             <div className="space-y-6">
-              {/* Email Confirmation */}
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
                 <div className="flex items-start gap-3">
                   <Mail className="w-5 h-5 text-blue-500 mt-0.5" />
@@ -215,7 +201,6 @@ const PendingApprovalPage = () => {
                 </div>
               </div>
 
-              {/* Artist Specific Information */}
               {role === "artist" && (
                 <>
                   <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
@@ -243,7 +228,6 @@ const PendingApprovalPage = () => {
                     </div>
                   </div>
 
-                  {/* Timeline */}
                   <div className="bg-gray-50 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Calendar className="w-5 h-5 text-gray-500" />
@@ -273,7 +257,6 @@ const PendingApprovalPage = () => {
                 </>
               )}
 
-              {/* Tips Section */}
               <div className="bg-green-50 rounded-xl p-4 border border-green-100">
                 <div className="flex items-start gap-3">
                   <Bell className="w-5 h-5 text-green-500 mt-0.5" />
@@ -292,7 +275,6 @@ const PendingApprovalPage = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="mt-8 space-y-3">
               <button
                 onClick={handleCheckStatus}
@@ -318,7 +300,6 @@ const PendingApprovalPage = () => {
               </Link>
             </div>
 
-            {/* FAQ Section */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <h4 className="text-center text-gray-600 font-semibold mb-3">
                 Frequently Asked Questions
@@ -358,7 +339,6 @@ const PendingApprovalPage = () => {
           </div>
         </div>
 
-        {/* Social Proof */}
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm mb-2">Trusted by 10,000+ artists worldwide</p>
           <div className="flex justify-center gap-4 text-gray-400">

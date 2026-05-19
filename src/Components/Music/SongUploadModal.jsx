@@ -1,4 +1,3 @@
-// components/SongUploadModal.jsx
 import React, { useEffect, useState } from "react";
 import {
     X,
@@ -26,29 +25,29 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
     });
     const dispatch = useDispatch();
     const { genreList } = useSelector((store) => store.music);
-
+    const [error, setError] = useState({})
     useEffect(() => {
         if (isOpen) {
             dispatch(getGenreList());
         }
     }, [isOpen, dispatch]);
-
+console.log("hello")
     const handleFileChange = (fieldName, maxSizeMB, allowedTypes) => (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
-        // Validate file size
+        setError(prev => ({
+            ...prev,
+            [fieldName]: ""
+        }))
         if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
-            Swal.fire({
-                icon: 'error',
-                title: 'File Too Large',
-                text: `File size must be less than ${maxSizeMB}MB`,
-                timer: 2000
-            });
+
+            setError(prev => ({
+                ...prev,
+                [fieldName]: `File size must be less than ${maxSizeMB}MB`
+            }))
             return;
         }
 
-        // Validate file type
         if (allowedTypes && allowedTypes.length > 0) {
             const fileType = file.type;
             const isValidType = allowedTypes.some(type => {
@@ -60,12 +59,10 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
             });
 
             if (!isValidType) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid File Type',
-                    text: `Please upload ${allowedTypes.join(', ')} files`,
-                    timer: 2000
-                });
+                setError(prev => ({
+                    ...prev,
+                    [fieldName]: `Please upload ${allowedTypes.join(', ')} files`
+                }))
                 return;
             }
         }
@@ -123,7 +120,7 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
             onClose();
 
         } catch (error) {
-                        onClose();
+            onClose();
 
             Swal.fire({
                 icon: 'error',
@@ -162,7 +159,6 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
                 </div>
 
                 <div className="space-y-4">
-                    {/* Song Title */}
                     <div>
                         <label className="block text-gray-700 mb-2 font-medium">
                             Song Title <span className="text-red-500">*</span>
@@ -262,6 +258,11 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
                                     </button>
                                 </div>
                             )}
+                                       {error?.uri && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {error.uri}
+                  </p>
+                )}
                         </div>
                     </div>
 
@@ -274,7 +275,7 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
                                 type="file"
                                 accept="image/*"
                                 id="image-upload"
-                                onChange={handleFileChange('image', 2, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])}
+                                onChange={handleFileChange('image', 2, ['image/jpeg', 'image/png'])}
                                 className="hidden"
                             />
                             {!uploadData.image ? (
@@ -310,6 +311,11 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
                                 </div>
                             )}
                         </div>
+                        {error?.image && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {error.image}
+                            </p>
+                        )}
                         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                             <AlertCircle className="w-3 h-3" />
                             Recommended: Square image, 500x500 pixels
@@ -339,4 +345,4 @@ const SongUploadModal = ({ isOpen, onClose, createLoading }) => {
     );
 };
 
-export default SongUploadModal;
+export default React.memo(SongUploadModal);

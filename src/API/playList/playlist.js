@@ -78,7 +78,6 @@ export const deletePlayList = createAsyncThunk(
     }
 )
 
-
 const playlistSlice = createSlice({
     name: "playlist",
     initialState: {
@@ -86,7 +85,12 @@ const playlistSlice = createSlice({
         loading: false,
         error: null
     },
-    reducers: {},
+    reducers: {
+           clearPlayListById: (state) => {
+            state.playListById = null;
+        },
+
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createPlayList.pending, (state) => {
@@ -150,5 +154,6 @@ const playlistSlice = createSlice({
     }
 })
 
+export const {clearPlayListById} = playlistSlice.actions;
 export default playlistSlice.reducer
 

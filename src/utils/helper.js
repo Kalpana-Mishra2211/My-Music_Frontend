@@ -4,7 +4,6 @@ export const formatTime = (seconds) => {
   return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
-
   export const getTotalDuration = (playlist) => {
     if (!playlist?.musics || playlist.musics.length === 0) return "0m";
     const total = playlist.musics.reduce((sum, song) => sum + (song.duration || 0), 0);

@@ -94,7 +94,7 @@ const PlaylistDetail = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
             <div className="container mx-auto px-12 py-6">
-             <MusicalBackButton to="/playlist" label="Back to PlayList" />
+                <MusicalBackButton to="/playlist" label="Back to PlayList" />
 
             </div>
 
@@ -166,14 +166,14 @@ const PlaylistDetail = () => {
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 w-16">#</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Title</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Artist</th>
-                                                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Genre</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Genre</th>
 
-                                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 w-24">
-  <div className="flex items-center gap-2">
-    <Clock className="w-4 h-4 text-gray-500" />
-    <span>Duration</span>
-  </div>
-</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 w-24">
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="w-4 h-4 text-gray-500" />
+                                            <span>Duration</span>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -231,7 +231,7 @@ const PlaylistDetail = () => {
                                                 <td className="px-6 py-4 text-gray-600">
                                                     {song.artist?.artistProfile?.stageName || "Unknown Artist"}
                                                 </td>
-                                                  <td className="px-6 py-4 text-gray-600">
+                                                <td className="px-6 py-4 text-gray-600">
                                                     {song.genre}
                                                 </td>
                                                 <td className="px-6 py-4 text-gray-400">
@@ -247,7 +247,7 @@ const PlaylistDetail = () => {
                 </div>
             </div>
 
-            {currentTrack  && (
+            {currentTrack && (
                 <CurrentTrackPlayer
                     currentTrack={currentTrack}
                     musicList={playListById?.musics}

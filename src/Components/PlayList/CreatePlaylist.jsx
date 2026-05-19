@@ -22,7 +22,7 @@ import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from "react-redux";
 import { getMusicList } from "../../API/music/music";
 import CurrentTrackPlayer from "../UI/CurrentTrack";
-import { createPlayList, getPlayListById ,updatePlayList } from "../../API/playList/playlist";
+import { createPlayList, getPlayListById, updatePlayList, clearPlayListById } from "../../API/playList/playlist";
 import MusicalBackButton from "../UI/MusicalBackButton";
 
 function CreatePlaylist() {
@@ -33,10 +33,11 @@ function CreatePlaylist() {
   const [user, setUser] = useState(null);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [error, setError] = useState({})
 
   const dispatch = useDispatch();
   const { musicsList } = useSelector((store) => store.music);
-  const { playListById } = useSelector((store) => store.playlist);
+  const { playListById, loading: playListLoading } = useSelector((store) => store.playlist);
   const [originalData, setOriginalData] = useState(null);
 
 
@@ -49,23 +50,24 @@ function CreatePlaylist() {
   });
 
   useEffect(() => {
+    dispatch(clearPlayListById())
     if (id) {
       dispatch(getPlayListById(id));
     }
   }, [dispatch, id]);
 
+
   useEffect(() => {
-    if (playListById) {
+    if (id && playListById) {
       setPlaylistData((pre) => ({
         ...pre,
         title: playListById.title || "",
         description: playListById.description || "",
         selectedSongs: playListById.musics.map((music) => music) || [],
-        imagePreview:playListById.image||null
+        imagePreview: playListById.image || null
 
       }))
-          setOriginalData(playListById);
-
+      setOriginalData(playListById);
     }
 
   }, [playListById])
@@ -86,20 +88,26 @@ function CreatePlaylist() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+  setError(prev => ({
+        ...prev,
+        imageFile: ""
+      }))
+    const allowedType = ["image/jpeg", "image/png"]
+
+    if (!allowedType.includes(file.type)) {
+      setError(prev => ({
+        ...prev,
+        imageFile: "Only JPG and PNG files are allowed"
+      }))
+      return;
+    }
+
     if (file) {
       setPlaylistData(prev => ({
         ...prev,
-        imageFile: file
+        imageFile: file,
+        imagePreview: URL.createObjectURL(file)
       }));
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPlaylistData(prev => ({
-          ...prev,
-          imagePreview: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -131,6 +139,19 @@ function CreatePlaylist() {
       }
     });
   };
+  if (playListLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        <div className="flex justify-center items-center h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+            <p className="text-purple-600 font-medium">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   const removeSong = (songId) => {
     setPlaylistData(prev => ({
@@ -145,99 +166,99 @@ function CreatePlaylist() {
   );
 
   const getChangedData = () => {
-  const formData = new FormData();
+    const formData = new FormData();
 
-  if (playlistData.title !== originalData.title) {
-    formData.append("title", playlistData.title);
-  }
-
-  if (playlistData.description !== originalData.description) {
-    formData.append("description", playlistData.description);
-  }
-
-const originalMusics = (originalData.musics || []).map(m => m._id);
-const currentMusics = playlistData.selectedSongs.map(m => m._id);
-
-const isMusicChanged =
-  JSON.stringify(originalMusics) !== JSON.stringify(currentMusics);
-
-if (isMusicChanged) {
-  currentMusics.forEach((id) => {
-    formData.append("musics", id);
-  });
-}
-
-  if (playlistData.imageFile) {
-    formData.append("image", playlistData.imageFile);
-  }
-
-  return formData;
-};
-
- const handleSubmitPlaylist = async () => {
-  try {
-    if (!playlistData?.title.trim()) {
-      return Swal.fire({
-        icon: "error",
-        title: "Missing Title",
-        text: "Please enter playlist title",
-      });
-    }
-
-    if (!playlistData?.selectedSongs.length) {
-      return Swal.fire({
-        icon: "error",
-        title: "No Songs Selected",
-        text: "Please select at least one song",
-      });
-    }
-
-    Swal.fire({
-      title: id ? "Updating Playlist..." : "Creating Playlist...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    let formData;
-
-    if (id) {
-      formData = getChangedData();
-      await dispatch(updatePlayList({ id, formData })).unwrap();
-    }
-
-    else {
-      formData = new FormData();
-
+    if (playlistData.title !== originalData.title) {
       formData.append("title", playlistData.title);
-      formData.append("description", playlistData.description || "");
+    }
 
-      playlistData.selectedSongs.forEach((song) => {
-        formData.append("musics", song._id);
+    if (playlistData.description !== originalData.description) {
+      formData.append("description", playlistData.description);
+    }
+
+    const originalMusics = (originalData.musics || []).map(m => m._id);
+    const currentMusics = playlistData.selectedSongs.map(m => m._id);
+
+    const isMusicChanged =
+      JSON.stringify(originalMusics) !== JSON.stringify(currentMusics);
+
+    if (isMusicChanged) {
+      currentMusics.forEach((id) => {
+        formData.append("musics", id);
       });
+    }
 
-      if (playlistData.imageFile) {
-        formData.append("image", playlistData.imageFile);
+    if (playlistData.imageFile) {
+      formData.append("image", playlistData.imageFile);
+    }
+
+    return formData;
+  };
+
+  const handleSubmitPlaylist = async () => {
+    try {
+      if (!playlistData?.title.trim()) {
+        return Swal.fire({
+          icon: "error",
+          title: "Missing Title",
+          text: "Please enter playlist title",
+        });
       }
 
-      await dispatch(createPlayList(formData)).unwrap();
+      if (!playlistData?.selectedSongs.length) {
+        return Swal.fire({
+          icon: "error",
+          title: "No Songs Selected",
+          text: "Please select at least one song",
+        });
+      }
+
+      Swal.fire({
+        title: id ? "Updating Playlist..." : "Creating Playlist...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      let formData;
+
+      if (id) {
+        formData = getChangedData();
+        await dispatch(updatePlayList({ id, formData })).unwrap();
+      }
+
+      else {
+        formData = new FormData();
+
+        formData.append("title", playlistData.title);
+        formData.append("description", playlistData.description || "");
+
+        playlistData.selectedSongs.forEach((song) => {
+          formData.append("musics", song._id);
+        });
+
+        if (playlistData.imageFile) {
+          formData.append("image", playlistData.imageFile);
+        }
+
+        await dispatch(createPlayList(formData)).unwrap();
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: id ? "Updated!" : "Created!",
+        text: `Playlist ${id ? "updated" : "created"} successfully`,
+      }).then(() => {
+        navigate(-1);
+      });
+
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: error || "Something went wrong",
+      });
     }
-
-    Swal.fire({
-      icon: "success",
-      title: id ? "Updated!" : "Created!",
-      text: `Playlist ${id ? "updated" : "created"} successfully`,
-    }).then(() => {
-      navigate(-1);
-    });
-
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Failed",
-      text: error || "Something went wrong",
-    });
-  }
-};
+  };
 
   const totalDuration = playlistData?.selectedSongs?.reduce((total, song) => total + (song.duration || 0), 0);
   const formattedTotalDuration = `${Math.floor(totalDuration / 60)}:${Math.floor(totalDuration % 60).toString().padStart(2, '0')}`;
@@ -246,12 +267,12 @@ if (isMusicChanged) {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-6">
-                  <MusicalBackButton to="/home" />
-  
+          <MusicalBackButton to="/playlist" />
+
 
           <div className="text-center">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {id ? "Updaye Playlist" : "Create New Playlist"}
+              {id ? "Update Playlist" : "Create New Playlist"}
             </h1>
             <p className="text-gray-600 mt-2">Create your perfect music collection</p>
           </div>
@@ -289,6 +310,11 @@ if (isMusicChanged) {
                     />
                   </label>
                 </div>
+                    {error?.imageFile && (
+              <p className="text-red-500 text-xs mt-1">
+                {error.imageFile}
+              </p>
+            )}
                 <p className="text-xs text-gray-500 mt-3">Click the upload button to add a cover image</p>
               </div>
             </div>

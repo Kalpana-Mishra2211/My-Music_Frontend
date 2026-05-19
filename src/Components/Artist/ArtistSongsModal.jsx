@@ -1,4 +1,3 @@
-// Components/Artist/ArtistSongsModal.jsx
 import React, { useState } from 'react';
 import { FaPlay, FaPlus, FaTimes, FaMusic, FaPause, FaHeart, FaShare, FaDownload } from 'react-icons/fa';
 

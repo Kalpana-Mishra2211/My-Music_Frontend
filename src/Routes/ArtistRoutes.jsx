@@ -4,8 +4,7 @@ import ArtistMusicDetails from "../Components/Artist/ArtistMusicDetails";
 import FollowingArtists from "../Components/Follow/FollowingArtists";
 import MyNetwork from "../Components/Follow/MyNetwork";
 
-const ArtistRoutes = () => {
-  return (
+const ArtistRoutes = (
     <>
       <Route
         path="/artist/music/:id"
@@ -23,6 +22,6 @@ const ArtistRoutes = () => {
       />
     </>
   );
-};
+
 
 export default ArtistRoutes;

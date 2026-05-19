@@ -53,11 +53,6 @@ const MusicListPage = () => {
     }
   }, [dispatch, activeTab]);
 
-  const artists = [
-    "all",
-    ...new Set(musicList.map((song) => song?.artist?.userName)),
-  ];
-
   const mySongs = musicList.filter(
     (song) => song?.artist?._id === userData.id || song?.artist?.id === userData.id
   );
@@ -131,14 +126,10 @@ const handleUploadMusic = async () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-200">
       <div className="max-w-7xl mx-auto px-4 py-8">
-
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
-
             <div className="flex items-start gap-4">
-
               <MusicalBackButton to="/home" />
-
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent mb-2 inline-block">
                   Music Library
@@ -149,10 +140,7 @@ const handleUploadMusic = async () => {
                     : `${musicList.length} songs available`}
                 </p>
               </div>
-
             </div>
-
-
 
             {userData.role === "artist" && (
               <button

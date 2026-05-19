@@ -4,8 +4,7 @@ import CreatePlaylist from "../Components/PlayList/CreatePlaylist";
 import PlaylistList from "../Components/PlayList/PlaylistList";
 import PlaylistDetail from "../Components/PlayList/PlaylistDetail";
 
-const PlaylistRoutes = () => {
-  return (
+const PlaylistRoutes = (
     <>
       <Route path="/create-playlist" element={<CreatePlaylist />} />
       <Route path="/playlist" element={<PlaylistList />} />
@@ -16,6 +15,6 @@ const PlaylistRoutes = () => {
       />
     </>
   );
-};
+
 
 export default PlaylistRoutes;

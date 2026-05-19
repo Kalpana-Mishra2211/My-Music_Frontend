@@ -1,5 +1,4 @@
-// MusicList.jsx (updated)
-import { useState } from "react";
+import React, { useState } from "react";
 import { Play, Pause, Heart, Trash2, ThumbsUp, Clock } from "lucide-react";
 import { deleteMusic, toggleFavorite, toggleLike } from "../../API/music/music";
 import { useDispatch } from "react-redux";
@@ -13,7 +12,6 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
   const [isPlaying, setIsPlaying] = useState(false);
   const dispatch = useDispatch();
 
-
   const handleTrackSelect = (track) => {
     if (currentTrack?._id === track._id) {
       setIsPlaying(!isPlaying);
@@ -22,7 +20,6 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
     setCurrentTrack(track);
     setIsPlaying(true);
   };
-
   const handleToggleFavorite = (musicId) => {
     dispatch(toggleFavorite(musicId));
     if (currentTrack?._id === musicId && favorite) {
@@ -46,7 +43,7 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
     });
   };
 
- 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
@@ -114,8 +111,9 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
                         e.stopPropagation();
                         handleToggleFavorite(track._id);
                       }}
-                      className="absolute top-2 right-2 bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition hover:scale-110"
-                    >
+                      className="absolute top-2 right-2 bg-white/90 p-2 rounded-full 
+                       opacity-100 md:opacity-0 md:group-hover:opacity-100 
+                       transition hover:scale-110"                    >
                       <Heart
                         className={`w-4 h-4 transition ${track?.isFavorite || favorite
                           ? "text-pink-500 fill-pink-500"
@@ -126,82 +124,80 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
                   )}
                 </div>
 
-               <div className="p-4 flex justify-between items-start">
-  <div className="flex-1 min-w-0">
-    <h3 className="font-bold text-lg truncate text-gray-800">
-      {track?.title}
-    </h3>
+                <div className="p-4 flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg truncate text-gray-800">
+                      {track?.title}
+                    </h3>
 
-    <p className="text-sm text-purple-500">
-      {track?.artist?.artistProfile?.stageName}
-    </p>
+                    <p className="text-sm text-purple-500">
+                      {track?.artist?.artistProfile?.stageName}
+                    </p>
 
-    <div className="flex items-center gap-2 mt-2 flex-wrap">
-     {track?.genre && (
-        <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 shadow-sm">
-          🎵 {track.genre}
-        </span>
-      )}
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {track?.genre && (
+                        <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 shadow-sm">
+                          🎵 {track.genre}
+                        </span>
+                      )}
 
-      {track?.duration && (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">
-          <Clock className="w-3 h-3" />
-          {formatTime(track.duration)}
-        </div>
-      )}
-    </div>
-  </div>
+                      {track?.duration && (
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-[11px] font-medium">
+                          <Clock className="w-3 h-3" />
+                          {formatTime(track.duration)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-  <div className="flex items-center gap-3">
-    {(like || track?.isLiked !== undefined) && (
-      <div className="relative group">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleLike(track._id);
-          }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer
+                  <div className="flex items-center gap-3">
+                    {(like || track?.isLiked !== undefined) && (
+                      <div className="relative group">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLike(track._id);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer
           hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
           bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100
           shadow-sm hover:shadow-md"
-        >
-          <div className="relative group">
-            <ThumbsUp
-              className={`transition-all duration-200 overflow-hidden
-              ${
-                track?.isLiked
-                  ? "w-4 h-4 text-purple-500 fill-purple-500"
-                  : "w-0 h-4 opacity-0 group-hover:w-4 group-hover:opacity-100 text-gray-400 group-hover:text-purple-500"
-              }`}
-            />
-          </div>
+                        >
+                          <div className="relative group">
+                            <ThumbsUp
+                              className={`transition-all duration-200 overflow-hidden
+              ${track?.isLiked
+                                  ? "w-4 h-4 text-purple-500 fill-purple-500"
+                                  : "w-0 h-4 opacity-0 group-hover:w-4 group-hover:opacity-100 text-gray-400 group-hover:text-purple-500"
+                                }`}
+                            />
+                          </div>
 
-          <span
-            className={`text-xs font-semibold ${
-              track?.isLiked ? "text-purple-600" : "text-gray-500"
-            }`}
-          >
-            {track?.likesCount || 0}
-          </span>
+                          <span
+                            className={`text-xs font-semibold ${track?.isLiked ? "text-purple-600" : "text-gray-500"
+                              }`}
+                          >
+                            {track?.likesCount || 0}
+                          </span>
 
-          <span className="text-xs text-gray-400">🎵</span>
-        </button>
-      </div>
-    )}
+                          <span className="text-xs text-gray-400">🎵</span>
+                        </button>
+                      </div>
+                    )}
 
-    {onDelete && activeTab === "my-songs" && (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDeleteClick(track._id);
-        }}
-        className="text-red-500 hover:text-red-700 transition flex items-center gap-1 text-sm p-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-    )}
-  </div>
-</div>
+                    {onDelete && activeTab === "my-songs" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(track._id);
+                        }}
+                        className="text-red-500 hover:text-red-700 transition flex items-center gap-1 text-sm p-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -221,4 +217,4 @@ function MusicList({ musicList = [], role, activeTab, favorite, onDelete, loadin
   );
 }
 
-export default MusicList;
+export default React.memo(MusicList);

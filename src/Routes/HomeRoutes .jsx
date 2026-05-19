@@ -2,8 +2,7 @@ import { Route } from "react-router-dom";
 import HomePage from "../Components/Header/HomePage";
 import PendingApprovalPage from "../Components/Header/PendingApprovalPage";
 
-const HomeRoutes = () => {
-  return (
+const HomeRoutes = (
     <>
       <Route path="/" element={<HomePage />} />
       <Route path="/home" element={<HomePage />} />
@@ -13,6 +12,6 @@ const HomeRoutes = () => {
       />
     </>
   );
-};
+
 
 export default HomeRoutes;

@@ -112,7 +112,6 @@ const AlbumDetail = () => {
         </span>
       </span>
 
-      {/* Created Date */}
       <span className="flex items-center gap-1">
         <span className="font-semibold text-gray-700">
           {formatDate(album.createdAt)}

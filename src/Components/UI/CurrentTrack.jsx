@@ -1,14 +1,16 @@
-// CurrentTrackPlayer.jsx
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, Repeat, Shuffle as ShuffleIcon } from "lucide-react";
+import { formatTime } from "../../utils/helper";
 
-function CurrentTrackPlayer({ 
-  currentTrack, 
-  musicList = [], 
+function CurrentTrackPlayer({
+  currentTrack,
+  musicList = [],
   onTrackChange,
   isPlaying: externalIsPlaying,
-  onPlayStateChange 
+  onPlayStateChange
 }) {
+
+
   const [internalIsPlaying, setInternalIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
@@ -22,19 +24,42 @@ function CurrentTrackPlayer({
   useEffect(() => {
     const audio = new Audio();
     audioRef.current = audio;
-
-    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateTime = () => setCurrentTime(audio.currentTime)
 
     audio.addEventListener("timeupdate", updateTime);
-    audio.addEventListener("ended", handleTrackEnd);
 
     return () => {
       audio.pause();
+
       audio.src = "";
       audio.removeEventListener("timeupdate", updateTime);
-      audio.removeEventListener("ended", handleTrackEnd);
+
     };
   }, []);
+
+  useEffect(() => {
+  const audio = audioRef.current;
+  if (!audio) return;
+  const onEnded = () => {
+
+    if (isRepeat) {
+      audio.currentTime = 0;
+      audio.play();
+
+    } else if (isShuffle && musicList.length > 1) {
+      playRandomTrack();
+      
+    } else {
+      playNextTrack();
+    }
+  };
+
+  audio.addEventListener("ended", onEnded);
+
+  return () => {
+    audio.removeEventListener("ended", onEnded);
+  };
+}, [isRepeat, isShuffle, currentTrack, musicList]);
 
   const handleTrackEnd = () => {
     if (isRepeat) {
@@ -47,23 +72,32 @@ function CurrentTrackPlayer({
     }
   };
 
-  const playNextTrack = () => {
-    if (!currentTrack || musicList.length === 0) return;
-    const currentIndex = musicList.findIndex(track => track._id === currentTrack?._id);
-    const nextIndex = (currentIndex + 1) % musicList.length;
-    if (nextIndex !== currentIndex && onTrackChange) {
-      onTrackChange(musicList[nextIndex]);
-    }
-  };
+const playNextTrack = () => {
+  if (!currentTrack || musicList.length === 0) return;
+  const currentIndex = musicList.findIndex(
+    track => track._id === currentTrack._id
+  );
+  if (currentIndex === -1) return;
 
-  const playPreviousTrack = () => {
-    if (!currentTrack || musicList.length === 0) return;
-    const currentIndex = musicList.findIndex(track => track._id === currentTrack?._id);
-    const prevIndex = (currentIndex - 1 + musicList.length) % musicList.length;
-    if (prevIndex !== currentIndex && onTrackChange) {
-      onTrackChange(musicList[prevIndex]);
-    }
-  };
+  const nextIndex = (currentIndex + 1) % musicList.length;  if (onTrackChange) {
+    onTrackChange(musicList[nextIndex]);
+  }
+};
+
+const playPreviousTrack = () => {
+  if (!currentTrack || musicList.length === 0) return;
+
+  const currentIndex = musicList.findIndex(
+    track => track._id === currentTrack._id
+  );
+  if (currentIndex === -1) return;
+  const prevIndex =
+    (currentIndex - 1 + musicList.length) % musicList.length;
+
+  if (onTrackChange) {
+    onTrackChange(musicList[prevIndex]);
+  }
+};
 
   const playRandomTrack = () => {
     if (musicList.length === 0) return;
@@ -104,19 +138,13 @@ function CurrentTrackPlayer({
   }, [isPlaying]);
 
   const handlePlayPause = () => {
+
     const newPlayState = !isPlaying;
     if (onPlayStateChange) {
       onPlayStateChange(newPlayState);
     } else {
       setInternalIsPlaying(newPlayState);
     }
-  };
-
-  const formatTime = (time) => {
-    if (isNaN(time)) return "0:00";
-    const m = Math.floor(time / 60);
-    const s = Math.floor(time % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
   const progressPercent = currentTrack?.duration ? (currentTime / currentTrack?.duration) * 100 : 0;
@@ -127,8 +155,8 @@ function CurrentTrackPlayer({
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 to-gray-800 backdrop-blur-xl border-t border-purple-500/30 shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between gap-6 flex-wrap">
-          <div className="flex items-center gap-4 min-w-[280px]">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
+        <div className="flex items-center gap-4">
             <div className="relative">
               <img
                 src={currentTrack?.image}
@@ -144,12 +172,12 @@ function CurrentTrackPlayer({
                 {currentTrack?.title}
               </h4>
               <p className="text-purple-300 text-xs">
-                {currentTrack?.artist?.artistProfile?.stageName||'Unknown Artist'}
+                {currentTrack?.artist?.artistProfile?.stageName || 'Unknown Artist'}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col items-center flex-1 max-w-xl gap-2">
+      <div className="flex flex-col items-center w-full lg:flex-1 max-w-xl gap-2">
             <div className="flex items-center gap-4">
               <button
                 onClick={playPreviousTrack}
@@ -178,8 +206,8 @@ function CurrentTrackPlayer({
               </button>
             </div>
 
-            <div className="flex items-center gap-3 w-full">
-              <span className="text-xs text-gray-400 font-mono">
+      <div className="flex items-center gap-2 md:gap-3 w-full">
+          <span className="text-[10px] md:text-xs text-gray-400 font-mono w-10 text-center">
                 {formatTime(currentTime)}
               </span>
 
@@ -209,8 +237,8 @@ function CurrentTrackPlayer({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 min-w-[200px] justify-end">
-            {/* <button
+      <div className="flex items-center justify-center lg:justify-end gap-3 w-full lg:w-auto min-w-0 lg:min-w-[200px]">
+            <button
               onClick={() => {
                 setIsShuffle(!isShuffle);
                 if (!isShuffle) setIsRepeat(false);
@@ -230,9 +258,9 @@ function CurrentTrackPlayer({
               title="Repeat"
             >
               <Repeat className="w-4 h-4" />
-            </button> */}
+            </button>
 
-            <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
               <button
                 onClick={() => setVolume(volume === 0 ? 1 : 0)}
                 className="text-gray-400 hover:text-white transition"
@@ -264,4 +292,4 @@ function CurrentTrackPlayer({
   );
 }
 
-export default CurrentTrackPlayer;
+export default React.memo(CurrentTrackPlayer);

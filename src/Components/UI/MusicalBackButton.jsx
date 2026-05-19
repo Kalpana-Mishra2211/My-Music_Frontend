@@ -4,7 +4,6 @@ import { ArrowLeft, Music } from 'lucide-react';
 
 const MusicalBackButton = ({ to, onClick, label = "Back" }) => {
     const navigate = useNavigate();
-
     const handleClick = () => {
         if (onClick) {
             onClick();
@@ -42,4 +41,4 @@ const MusicalBackButton = ({ to, onClick, label = "Back" }) => {
     );
 };
 
-export default MusicalBackButton;
+export default React.memo(MusicalBackButton);

@@ -33,15 +33,15 @@ const CreateAlbumModal = ({ isOpen, onClose, onAlbumCreated, id }) => {
     image: null,
     musics: []
   });
-
+  const [error, setError] = useState({})
   const [previewUrl, setPreviewUrl] = useState(null);
 
 
   useEffect(() => {
-    if(id){
-    dispatch(getMusicByAlbum(id))
+    if (id) {
+      dispatch(getMusicByAlbum(id))
     }
-  }, [dispatch,id])
+  }, [dispatch, id])
 
 
   useEffect(() => {
@@ -66,16 +66,30 @@ const CreateAlbumModal = ({ isOpen, onClose, onAlbumCreated, id }) => {
 
 
   }
-const filteredMusic = musicsList?.filter((music) => {
-  const query = searchTerm.toLowerCase();
-  return (
-    music?.title?.toLowerCase().includes(query) ||
-    music?.artist?.userName?.toLowerCase().includes(query)
-  );
-}) || [];
+  const filteredMusic = musicsList?.filter((music) => {
+    const query = searchTerm.toLowerCase();
+    return (
+      music?.title?.toLowerCase().includes(query) ||
+      music?.artist?.userName?.toLowerCase().includes(query)
+    );
+  }) || [];
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    setError(pre => ({
+      ...pre,
+      image: ""
+    }))
+    const allowedType = ['image/jpeg', 'image/png']
+
+    if (!allowedType.includes(file.type)) {
+      setError(pre => ({
+        ...pre,
+        image: "Only JPG and PNG files are allowed"
+      }))
+      return;
+    }
+
     if (file) {
       setAlbumData({ ...albumData, image: file });
       const url = URL.createObjectURL(file);
@@ -86,7 +100,6 @@ const filteredMusic = musicsList?.filter((music) => {
   const removeImage = () => {
     setAlbumData({ ...albumData, image: null });
     if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
     }
   };
@@ -132,14 +145,14 @@ const filteredMusic = musicsList?.filter((music) => {
     e.preventDefault();
 
     try {
-          Swal.fire({
-      title: id ? "Updating Album..." : "Creating Album...",
-      text: "Please wait",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+      Swal.fire({
+        title: id ? "Updating Album..." : "Creating Album...",
+        text: "Please wait",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
       const formData = new FormData();
 
       if (!id) {
@@ -224,7 +237,7 @@ const filteredMusic = musicsList?.filter((music) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4 overflow-y-auto " 
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4 overflow-y-auto "
       onClick={onClose}
     >
       <div
@@ -291,10 +304,15 @@ const filteredMusic = musicsList?.filter((music) => {
                   </div>
                 </div>
               )}
+
             </div>
+            {error?.image && (
+              <p className="text-red-500 text-xs mt-1">
+                {error.image}
+              </p>
+            )}
           </div>
 
-          {/* Album Title */}
           <div>
             <label className="block text-gray-700 mb-2 font-medium">
               Album Title <span className="text-red-500">*</span>
@@ -313,7 +331,6 @@ const filteredMusic = musicsList?.filter((music) => {
             </div>
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-gray-700 mb-2 font-medium">
               Description
