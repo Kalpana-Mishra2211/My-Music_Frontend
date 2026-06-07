@@ -10,7 +10,6 @@ function HomePage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
-  const token = localStorage.getItem("token");
   const { stats } = useSelector((store) => store.artist);
   const [followingArtists, setFollowingArtists] = useState([]);
   const [loadingFollowing, setLoadingFollowing] = useState(false);
@@ -19,10 +18,10 @@ function HomePage() {
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user") || "{}");
-    if (token && userData) {
+    if (userData) {
       setUser(userData);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     dispatch(getStats());

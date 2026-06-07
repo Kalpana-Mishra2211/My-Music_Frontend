@@ -43,7 +43,6 @@ function AlbumList() {
     const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const token = localStorage.getItem("token");
     const [activeTab, setActiveTab] = useState("all");
 
 
@@ -170,7 +169,7 @@ function AlbumList() {
                             </div>
                         </div>
 
-                        {user?.role === "artist" && token && (
+                        {user?.role === "artist"  && (
                             <button
                                 onClick={() => setShowCreateModal(true)}
                                 className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all flex items-center gap-2 shadow-md"

@@ -63,7 +63,6 @@ function ChangePassword({ isOpen, onClose }) {
             ).unwrap();
 
             dispatch(logout());
-            localStorage.removeItem("token");
             localStorage.removeItem("user");
 
             navigate("/login");

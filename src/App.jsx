@@ -10,6 +10,7 @@ import PlaylistRoutes from "./Routes/PlaylistRoutes";
 import ArtistRoutes from "./Routes/ArtistRoutes";
 import ForgotPasswordPage from "./Components/Auth/ForgotPasswordPage";
 import ResetPasswordPage from "./Components/Auth/ResetPasswordPage";
+import PublicRoute from "./Components/Auth/PublicRoute";
 
 
 function App() {
@@ -17,13 +18,12 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="/reset-password/:token"
-          element={<ResetPasswordPage />}
-        />
+   <Route element={<PublicRoute/>}>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+    </Route>
 
         <Route element={<PrivateRoute />}>
 

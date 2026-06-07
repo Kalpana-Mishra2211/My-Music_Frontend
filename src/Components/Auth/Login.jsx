@@ -20,15 +20,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
   const [identifier, setIdentifier] = useState("");
-  const token = localStorage.getItem("token")
-
-  useEffect(() => {
-    if (token) {
-      navigate('/');
-    }
-  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -52,24 +44,27 @@ const LoginPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = async () => {
-    if (!validateForm()) return;
-    const res = await dispatch(loginUser({ identifier, password }));
-    if (res.meta.requestStatus === "fulfilled") {
-      localStorage.setItem("token", res.payload.user.accessToken);
-      const { userName, email, role, id } = res.payload.user;
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id,
-          userName,
-          email,
-          role,
-        })
-      ); navigate("/home");
+const handleLogin = async () => {
+  if (!validateForm()) return;
 
-    }
-  };
+  const res = await dispatch(loginUser({ identifier, password }));
+
+  if (res.meta.requestStatus === "fulfilled") {
+    const { userName, email, role, id } = res.payload.user;
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        id,
+        userName,
+        email,
+        role,
+      })
+    );
+
+    navigate("/home");
+  }
+};
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {

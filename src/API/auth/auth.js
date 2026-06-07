@@ -8,7 +8,9 @@ export const loginUser = createAsyncThunk(
       const res = await api.post("/auth/login", data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Login failed"
+      );
     }
   }
 );
@@ -20,54 +22,44 @@ export const registerUser = createAsyncThunk(
       const res = await api.post("/auth/register", data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Registration failed"
+      );
     }
   }
 );
 
 export const forgotPassword = createAsyncThunk(
-
   "auth/forgotPassword",
-
   async (email, thunkAPI) => {
-
     try {
-
       const res = await api.post(
         "/auth/forgot-password",
         email
       );
 
       return res.data;
-
     } catch (err) {
-
       return thunkAPI.rejectWithValue(
-        err.response.data.message
+        err.response?.data?.message
       );
     }
   }
 );
 
 export const resetPassword = createAsyncThunk(
-
   "auth/resetPassword",
-
-  async ({ token, password }, { rejectWithValue }) => {
-
+  async ({ token, password }, thunkAPI) => {
     try {
-
       const res = await api.post(
         "/auth/reset-password",
         { token, password }
       );
 
       return res.data;
-
     } catch (err) {
-
-      return rejectWithValue(
-        err.response.data.message
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message
       );
     }
   }
@@ -75,102 +67,120 @@ export const resetPassword = createAsyncThunk(
 
 export const changePassword = createAsyncThunk(
   "auth/changePassword",
-  async ({ currentPassword, newPassword }, { rejectWithValue }) => {
+  async (
+    { currentPassword, newPassword },
+    thunkAPI
+  ) => {
     try {
       const res = await api.post(
         "/auth/change-password",
-        { currentPassword, newPassword },
+        {
+          currentPassword,
+          newPassword,
+        }
       );
 
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message
+      );
     }
   }
 );
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState: {
     user: null,
+    isAuthenticated: false,
+
     loading: false,
+
     loginError: null,
     signupError: null,
+
     forgotPasswordSuccess: null,
     forgotPasswordError: null,
+
     resetPasswordSuccess: null,
     resetPasswordError: null,
+
     changePasswordSuccess: null,
     changePasswordError: null,
   },
+
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("token");
+      state.isAuthenticated = false;
     },
+
     clearChangeMessage: (state) => {
       state.changePasswordSuccess = null;
       state.changePasswordError = null;
-
     },
   },
+
   extraReducers: (builder) => {
     builder
+
+      // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.loginError = null;
       })
+
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.isAuthenticated = true;
         state.loginError = null;
-
       })
+
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.loginError = action.payload;
-
+        state.isAuthenticated = false;
       })
 
+      // REGISTER
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.signupError = null;
-
       })
+
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.signupError = null;
-
       })
+
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.signupError = action.payload;
-
       })
+
+      // FORGOT PASSWORD
       .addCase(forgotPassword.pending, (state) => {
-
         state.loading = true;
-
         state.forgotPasswordError = null;
-
         state.forgotPasswordSuccess = null;
       })
 
       .addCase(forgotPassword.fulfilled, (state, action) => {
-
         state.loading = false;
-
         state.forgotPasswordSuccess =
           action.payload.message;
       })
 
       .addCase(forgotPassword.rejected, (state, action) => {
-
         state.loading = false;
-
         state.forgotPasswordError =
           action.payload;
       })
+
+      // RESET PASSWORD
       .addCase(resetPassword.pending, (state) => {
         state.loading = true;
         state.resetPasswordError = null;
@@ -179,13 +189,17 @@ const authSlice = createSlice({
 
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.resetPasswordSuccess = action.payload.message;
+        state.resetPasswordSuccess =
+          action.payload.message;
       })
 
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
-        state.resetPasswordError = action.payload;
+        state.resetPasswordError =
+          action.payload;
       })
+
+      // CHANGE PASSWORD
       .addCase(changePassword.pending, (state) => {
         state.loading = true;
         state.changePasswordError = null;
@@ -195,16 +209,22 @@ const authSlice = createSlice({
       .addCase(changePassword.fulfilled, (state, action) => {
         state.loading = false;
         state.changePasswordError = null;
-        state.changePasswordSuccess = action.payload.message;
+        state.changePasswordSuccess =
+          action.payload.message;
       })
 
       .addCase(changePassword.rejected, (state, action) => {
         state.loading = false;
-        state.changePasswordError = action.payload;
+        state.changePasswordError =
+          action.payload;
         state.changePasswordSuccess = null;
-      })
+      });
   },
 });
 
-export const { logout ,clearChangeMessage } = authSlice.actions;
+export const {
+  logout,
+  clearChangeMessage,
+} = authSlice.actions;
+
 export default authSlice.reducer;

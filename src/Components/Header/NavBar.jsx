@@ -34,16 +34,15 @@ function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isArtistModalOpen, setIsArtistModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user") || "{}");
-    if (token && userData) {
+    if ( userData) {
       setUser(userData);
     } else {
       setUser(null);
     }
-  }, [token, location]);
+  }, [location]);
 
   const handleLogout = () => {
     Swal.fire({
@@ -57,7 +56,6 @@ function NavBar() {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("token");
         localStorage.removeItem("user");
         setUser(null);
         navigate("/login");
